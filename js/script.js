@@ -67,7 +67,7 @@ function renderFiles(files, searchQuery, folderId, pageToken, nextPageToken) {
                 file.thumbnailLink ? 
                     `<img src="${file.thumbnailLink}" alt="Thumbnail" class="w-full h-32 object-cover rounded-md mb-2">` : 
                     `<div class="w-full h-32 bg-gray-200 rounded-md mb-2 flex items-center justify-center text-gray-500">No Thumbnail</div>`}
-            <h3 class="text-sm font-medium text-gray-800 truncate">${removeFileExtension(file.name)}</h3>
+            <h3 class="text-sm font-medium text-gray-800 truncate">${file.name}</h3>
             <div class="mt-2 flex space-x-2">
                 ${isFolder ? 
                     `<a href="?folderId=${file.id}&q=${encodeURIComponent(searchQuery)}" class="bg-green-600 text-white px-3 py-1 rounded-md text-sm hover:bg-green-700 flex items-center"><i class="fas fa-folder-open mr-1"></i> Mở Folder</a>` : 
