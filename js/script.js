@@ -18,6 +18,9 @@ function buildSearchQuery(searchQuery, folderId) {
 
 function removeFileExtension(fileName) {
     try {
+        if (!fileName.includes('.')) {
+            return fileName;
+        }
         return fileName.split('.').slice(0, -1).join('.');
     } catch (e) {
         console.error('Lỗi trong removeFileExtension:', e);
@@ -46,6 +49,20 @@ async function getFiles(apiKey, folderId, searchQuery = '', pageToken = '') {
     }
 }
 
+function showDownloadSpinner(button) {
+    const icon = button.querySelector('i');
+    icon.classList.remove('fa-download');
+    icon.classList.add('fa-spinner', 'fa-spin');
+    button.classList.add('disabled');
+}
+
+function hideDownloadSpinner(button) {
+    const icon = button.querySelector('i');
+    icon.classList.remove('fa-spinner', 'fa-spin');
+    icon.classList.add('fa-download');
+    button.classList.remove('disabled');
+}
+
 function renderFiles(files, searchQuery, folderId, pageToken, nextPageToken) {
     const fileGrid = document.getElementById('fileGrid');
     const errorMessage = document.getElementById('errorMessage');
@@ -67,14 +84,26 @@ function renderFiles(files, searchQuery, folderId, pageToken, nextPageToken) {
                 file.thumbnailLink ? 
                     `<img src="${file.thumbnailLink}" alt="Thumbnail" class="w-full h-32 object-cover rounded-md mb-2">` : 
                     `<div class="w-full h-32 bg-gray-200 rounded-md mb-2 flex items-center justify-center text-gray-500">No Thumbnail</div>`}
-            <h3 class="text-sm font-medium text-gray-800 truncate">${file.name}</h3>
+            <h3 class="text-sm font-medium text-gray-800 truncate">${removeFileExtension(file.name)}</h3>
             <div class="mt-2 flex space-x-2">
                 ${isFolder ? 
                     `<a href="?folderId=${file.id}&q=${encodeURIComponent(searchQuery)}" class="bg-green-600 text-white px-3 py-1 rounded-md text-sm hover:bg-green-700 flex items-center"><i class="fas fa-folder-open mr-1"></i> Mở Folder</a>` : 
-                    `<a href="${file.webContentLink}" class="bg-blue-600 text-white px-3 py-1 rounded-md text-sm hover:bg-blue-700 flex items-center"><i class="fas fa-download mr-1"></i> Tải xuống</a>
+                    `<a href="${file.webContentLink}" class="bg-blue-600 text-white px-3 py-1 rounded-md text-sm hover:bg-blue-700 flex items-center download-button" data-file-id="${file.id}">
+                        <i class="fas fa-download mr-1"></i> Tải xuống
+                    </a>
                     <button onclick="copyLink('${file.webContentLink}')" class="bg-gray-600 text-white px-3 py-1 rounded-md text-sm hover:bg-gray-700 flex items-center"><i class="fas fa-link mr-1"></i> Copy Link</button>`}
             </div>`;
         fileGrid.appendChild(div);
+    });
+
+    // Thêm sự kiện cho các nút tải xuống
+    document.querySelectorAll('.download-button').forEach(button => {
+        button.addEventListener('click', (e) => {
+            showDownloadSpinner(button);
+            setTimeout(() => {
+                hideDownloadSpinner(button);
+            }, 5555);
+        });
     });
 
     const pagination = document.getElementById('pagination');
@@ -117,7 +146,7 @@ document.getElementById('searchInput').addEventListener('input', async function(
         const newUrl = `?q=${encodeURIComponent(searchQuery)}&folderId=${folderId}`;
         window.history.pushState({}, '', newUrl);
         await loadFiles();
-    }, 1111);
+    }, 1111); // Debounce 3 giây
 });
 
 window.addEventListener('popstate', async () => {
