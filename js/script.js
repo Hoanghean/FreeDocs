@@ -91,7 +91,10 @@ function renderFiles(files, searchQuery, folderId, pageToken, nextPageToken) {
                     `<a href="${file.webContentLink}" class="bg-blue-600 text-white px-3 py-1 rounded-md text-sm hover:bg-blue-700 flex items-center download-button" data-file-id="${file.id}">
                         <i class="fas fa-download mr-1"></i> Tải xuống
                     </a>
-                    <button onclick="copyLink('${file.webContentLink}')" class="bg-gray-600 text-white px-3 py-1 rounded-md text-sm hover:bg-gray-700 flex items-center"><i class="fas fa-link mr-1"></i> Copy Link</button>`}
+                    <a href="https://drive.google.com/file/d/${file.id}" class="bg-orange-500 text-white px-3 py-1 rounded-md text-sm hover:bg-orange-600 flex items-center download-button" data-file-id="${file.id}">
+                        <i class="fas fa-eye mr-1"></i>
+                    </a>
+                    <button onclick="copyLink('${file.webContentLink}')" class="bg-gray-600 text-white px-3 py-1 rounded-md text-sm hover:bg-gray-700 flex items-center"><i class="fas fa-link mr-1"></i></button>`}
             </div>`;
         fileGrid.appendChild(div);
     });
